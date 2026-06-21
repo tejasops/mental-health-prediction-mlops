@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .result-box {
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .result-box.positive {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        .result-box.negative {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+        }
+        .result-box.error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+        .result-label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .positive .result-label { color: #2e7d32; }
+        .negative .result-label { color: #1565c0; }
+        .error .result-label { color: #c62828; }
+        .result-message {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .btn-back:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .disclaimer {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Result</h1>
+
+        <div class="result-box {{ result_class }}">
+            <div class="result-label">
+                Treatment Recommended: {{ prediction }}
+            </div>
+            <div class="result-message">
+                {{ message }}
+            </div>
+        </div>
+
+        <a href="/" class="btn-back">Make Another Prediction</a>
+
+        <div class="disclaimer">
+            This tool is for educational purposes only. It is not a substitute for professional medical advice.
+        </div>
+    </div>
+</body>
+</html>
