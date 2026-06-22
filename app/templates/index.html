@@ -20,28 +20,18 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             padding: 40px;
         }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
+        h1 { text-align: center; color: #333; margin-bottom: 10px; font-size: 28px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        .section-label {
+            font-size: 11px;
             font-weight: 600;
-            color: #444;
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #9ca3af;
+            margin: 24px 0 12px;
         }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; font-size: 14px; }
         .form-group select, .form-group input {
             width: 100%;
             padding: 10px 14px;
@@ -56,14 +46,8 @@
             border-color: #667eea;
             background: white;
         }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0 20px;
-        }
-        @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
-        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
         .btn-submit {
             display: block;
             width: 100%;
@@ -78,10 +62,26 @@
             margin-top: 20px;
             transition: transform 0.1s, box-shadow 0.2s;
         }
-        .btn-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
+        .btn-submit:disabled { opacity: .6; cursor: default; transform: none; }
+        .result-card {
+            display: none;
+            margin-top: 24px;
+            padding: 24px;
+            border-radius: 10px;
+            text-align: center;
         }
+        .result-card.show { display: block; }
+        .result-card.yes { background: #FAECE7; border: 2px solid #F0997B; }
+        .result-card.no { background: #EAF3DE; border: 2px solid #97C459; }
+        .result-card.error { background: #fff3cd; border: 2px solid #ffc107; }
+        .result-icon { font-size: 48px; margin-bottom: 10px; }
+        .result-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .result-card.yes .result-title { color: #993C1D; }
+        .result-card.no .result-title { color: #27500A; }
+        .result-msg { font-size: 13px; color: #555; line-height: 1.6; max-width: 500px; margin: 0 auto; }
+        .loading { display: none; text-align: center; padding: 12px; color: #667eea; font-size: 14px; margin-top: 12px; }
+        .loading.show { display: block; }
         .disclaimer {
             margin-top: 20px;
             padding: 12px;
@@ -94,38 +94,222 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Mental Health Treatment Predictor</h1>
-        <p class="subtitle">Answer the questions below to get a prediction about whether seeking mental health treatment could be beneficial.</p>
+<div class="container">
+    <h1>Mental Health Treatment Predictor</h1>
+    <p class="subtitle">Answer the questions below to get a prediction about whether seeking mental health treatment could be beneficial.</p>
 
-        <form action="/predict" method="POST">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="Age">Age</label>
-                    <input type="number" name="Age" id="Age" min="18" max="100" value="30" required>
-                </div>
-
-                {% for field, opts in options.items() %}
-                {% if field != 'Age' %}
-                <div class="form-group">
-                    <label for="{{ field }}">{{ field.replace('_', ' ').title() }}</label>
-                    <select name="{{ field }}" id="{{ field }}" required>
-                        {% for opt in opts %}
-                        <option value="{{ opt }}">{{ opt }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endif %}
-                {% endfor %}
-            </div>
-
-            <button type="submit" class="btn-submit">Get Prediction</button>
-        </form>
-
-        <div class="disclaimer">
-            This tool is for educational purposes only. It is not a substitute for professional medical advice.
-            If you are in crisis, please contact a mental health professional or call a crisis hotline.
+    <div class="section-label">Personal information</div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="Age">Age</label>
+            <input type="number" id="Age" min="18" max="100" value="28">
+        </div>
+        <div class="form-group">
+            <label for="Gender">Gender</label>
+            <select id="Gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="trans">Trans</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="family_history">Family history of mental illness</label>
+            <select id="family_history">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="self_employed">Self employed</label>
+            <select id="self_employed">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
         </div>
     </div>
+
+    <div class="section-label">Work environment</div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="work_interfere">Work interference</label>
+            <select id="work_interfere">
+                <option value="Never">Never</option>
+                <option value="Rarely">Rarely</option>
+                <option value="Sometimes">Sometimes</option>
+                <option value="Often">Often</option>
+                <option value="Don't know">Don't know</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="no_employees">Company size</label>
+            <select id="no_employees">
+                <option value="1-5">1–5</option>
+                <option value="6-25">6–25</option>
+                <option value="26-100">26–100</option>
+                <option value="100-500">100–500</option>
+                <option value="500-1000">500–1000</option>
+                <option value="More than 1000">More than 1000</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="remote_work">Remote work</label>
+            <select id="remote_work">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="tech_company">Tech company</label>
+            <select id="tech_company">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="benefits">Mental health benefits offered</label>
+            <select id="benefits">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+                <option value="Don't know">Don't know</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="leave">Ease of taking mental health leave</label>
+            <select id="leave">
+                <option value="Very easy">Very easy</option>
+                <option value="Somewhat easy">Somewhat easy</option>
+                <option value="Don't know">Don't know</option>
+                <option value="Somewhat difficult">Somewhat difficult</option>
+                <option value="Very difficult">Very difficult</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="section-label">Workplace mental health culture</div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="mental_health_consequence">Fear of mental health consequences</label>
+            <select id="mental_health_consequence">
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="seek_help">Employer provides help resources</label>
+            <select id="seek_help">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+                <option value="Don't know">Don't know</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="anonymity">Anonymity protected if seeking help</label>
+            <select id="anonymity">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+                <option value="Don't know">Don't know</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="coworkers">Comfortable discussing with coworkers</label>
+            <select id="coworkers">
+                <option value="No">No</option>
+                <option value="Some of them">Some of them</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="supervisor">Comfortable discussing with supervisor</label>
+            <select id="supervisor">
+                <option value="No">No</option>
+                <option value="Some of them">Some of them</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="obs_consequence">Seen negative consequences for others</label>
+            <select id="obs_consequence">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-submit" id="predictBtn" onclick="predict()">Get Prediction</button>
+
+    <div class="loading" id="loading">Analysing your responses...</div>
+
+    <div class="result-card" id="resultCard">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+        <p class="result-msg" id="resultMsg"></p>
+    </div>
+
+    <div class="disclaimer">
+        This tool is for educational purposes only and is not a substitute for professional medical advice.
+        If you are in crisis, please contact a mental health professional or call a crisis hotline.
+    </div>
+</div>
+
+<script>
+async function predict() {
+    const btn = document.getElementById('predictBtn');
+    const loading = document.getElementById('loading');
+    const resultCard = document.getElementById('resultCard');
+
+    btn.disabled = true;
+    loading.classList.add('show');
+    resultCard.className = 'result-card';
+
+    const payload = {
+        Age: parseInt(document.getElementById('Age').value) || 28,
+        Gender: document.getElementById('Gender').value,
+        family_history: document.getElementById('family_history').value,
+        self_employed: document.getElementById('self_employed').value,
+        work_interfere: document.getElementById('work_interfere').value,
+        no_employees: document.getElementById('no_employees').value,
+        remote_work: document.getElementById('remote_work').value,
+        tech_company: document.getElementById('tech_company').value,
+        benefits: document.getElementById('benefits').value,
+        leave: document.getElementById('leave').value,
+        mental_health_consequence: document.getElementById('mental_health_consequence').value,
+        seek_help: document.getElementById('seek_help').value,
+        anonymity: document.getElementById('anonymity').value,
+        coworkers: document.getElementById('coworkers').value,
+        supervisor: document.getElementById('supervisor').value,
+        obs_consequence: document.getElementById('obs_consequence').value,
+    };
+
+    try {
+        const res = await fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.recommends_treatment) {
+            document.getElementById('resultIcon').textContent = '🧠';
+            document.getElementById('resultTitle').textContent = 'Treatment recommended';
+            document.getElementById('resultMsg').textContent = 'Based on your responses, you may benefit from speaking with a mental health professional. This is not a diagnosis — please consult a qualified professional.';
+            resultCard.className = 'result-card yes show';
+        } else {
+            document.getElementById('resultIcon').textContent = '✅';
+            document.getElementById('resultTitle').textContent = 'No treatment needed';
+            document.getElementById('resultMsg').textContent = 'Based on your responses, mental health treatment may not be immediately necessary. However, always consult a professional if you have any concerns.';
+            resultCard.className = 'result-card no show';
+        }
+    } catch(e) {
+        document.getElementById('resultIcon').textContent = '⚠️';
+        document.getElementById('resultTitle').textContent = 'Something went wrong';
+        document.getElementById('resultMsg').textContent = 'Could not connect to the prediction API. Please try again.';
+        resultCard.className = 'result-card error show';
+    } finally {
+        btn.disabled = false;
+        loading.classList.remove('show');
+    }
+}
+</script>
 </body>
 </html>

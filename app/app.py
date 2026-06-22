@@ -2,8 +2,7 @@
 import os
 import pickle
 import pandas as pd
-from flask import Flask, request, jsonify
-
+from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'models', 'best_model.pkl')
@@ -94,11 +93,7 @@ def predict():
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({
-        'service': 'mental-health-prediction-api',
-        'version': '1.0.0',
-        'endpoints': ['/health', '/predict']
-    }), 200
+    return render_template('index.html')
 
 
 load_artifacts()
