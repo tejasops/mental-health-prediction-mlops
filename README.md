@@ -5,45 +5,48 @@ A production-grade MLOps project that predicts mental health treatment recommend
 ---
 
 ## Architecture
-          Developer
-              │
-              │  git push
-              ▼
-    GitHub Actions CI
-    ├── Run pytest (6 tests)
-    └── Build & push Docker image
-              │
-              ▼
-         Docker Hub
-  (tejasops/mental-health-api)
-              │
-              │  auto-sync
-              ▼
-       ArgoCD GitOps
-              │
-              │  applies Helm chart
-              ▼
-     Kubernetes Cluster
-              │
-      ┌───────┴────────────────┐
-      │       Helm Chart       │
-      │  Deployment (2 pods)   │
-      │  Service (ClusterIP)   │
-      │  Ingress (nginx)       │
-      └───────┬────────────────┘
-              │
-              ▼
-       Flask REST API
-       ├── POST /predict   → ML prediction
-       ├── GET  /health    → K8s probe
-       ├── GET  /api       → Service info
-       ├── GET  /          → Web UI
-       └── GET  /metrics   → Prometheus
-              │
-              │  scrape every 15s
-              ▼
-         Prometheus
-  (request rate, latency, memory, CPU)
+
+```
+              Developer
+                  │
+                  │  git push
+                  ▼
+        GitHub Actions CI
+        ├── Run pytest (6 tests)
+        └── Build & push Docker image
+                  │
+                  ▼
+             Docker Hub
+      (tejasops/mental-health-api)
+                  │
+                  │  auto-sync
+                  ▼
+           ArgoCD GitOps
+                  │
+                  │  applies Helm chart
+                  ▼
+         Kubernetes Cluster
+                  │
+          ┌───────┴───────────────┐
+          │      Helm Chart       │
+          │  Deployment (2 pods)  │
+          │  Service (ClusterIP)  │
+          │  Ingress (nginx)      │
+          └───────┬───────────────┘
+                  │
+                  ▼
+           Flask REST API
+           ├── POST /predict   → ML prediction
+           ├── GET  /health    → K8s probe
+           ├── GET  /api       → Service info
+           ├── GET  /          → Web UI
+           └── GET  /metrics   → Prometheus
+                  │
+                  │  scrape every 15s
+                  ▼
+             Prometheus
+      (request rate, latency, memory, CPU)
+```
 
 ---
 
@@ -64,47 +67,30 @@ A production-grade MLOps project that predicts mental health treatment recommend
 ---
 
 ## Project Structure
+
+```
 mental-health-prediction-mlops/
-
 ├── app/
-
 │   ├── app.py                       # Flask REST API
-
 │   └── templates/                   # Web UI
-
 ├── src/                             # ML pipeline modules
-
 ├── models/                          # Trained model artifacts
-
 ├── data/                            # Raw and processed data
-
 ├── notebooks/                       # EDA and modeling notebooks
-
 ├── tests/
-
 │   └── test_app.py                  # pytest suite (6 tests)
-
 ├── mental-health-api/               # Helm chart
-
 │   ├── Chart.yaml
-
 │   ├── values.yaml
-
 │   └── templates/
-
 ├── k8s/                             # Raw Kubernetes manifests
-
 ├── .github/workflows/ci.yml         # GitHub Actions CI pipeline
-
 ├── argocd-app.yaml                  # ArgoCD Application manifest
-
 ├── prometheus-scrape-config.yaml
-
 ├── Dockerfile
-
 ├── train.py
-
 └── requirements.txt
+```
 
 ---
 
@@ -119,6 +105,7 @@ mental-health-prediction-mlops/
 | `/metrics` | GET | Prometheus metrics |
 
 ### Prediction Request
+
 ```bash
 curl -X POST http://<host>/predict \
   -H "Content-Type: application/json" \
@@ -126,6 +113,7 @@ curl -X POST http://<host>/predict \
 ```
 
 ### Prediction Response
+
 ```json
 {
   "prediction": "Yes",
