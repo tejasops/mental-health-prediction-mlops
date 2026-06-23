@@ -25,6 +25,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Debug /api route
+        run: |
+          PYTHONPATH=. python3 -c "
+          from app.app import app
+          app.config['TESTING'] = True
+          with app.test_client() as c:
+              r = c.get('/api')
+              print('Status:', r.status_code)
+              print('Content-Type:', r.content_type)
+              print('Data:', r.data[:500])
+              print('JSON:', r.get_json())
+          "
+
       - name: Run pytest
         run: |
           PYTHONPATH=. pytest tests/ -v --tb=short
