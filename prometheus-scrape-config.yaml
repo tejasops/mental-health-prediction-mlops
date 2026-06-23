@@ -1,0 +1,6 @@
+extraScrapeConfigs: |
+  - job_name: 'mental-health-api'
+    static_configs:
+      - targets: ['mental-health-api-service.mental-health.svc.cluster.local:80']
+    metrics_path: /metrics
+    scrape_interval: 15s
