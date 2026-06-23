@@ -25,12 +25,12 @@ A production-grade MLOps project that predicts mental health treatment recommend
               ▼
      Kubernetes Cluster
               │
-         ┌────┴──────────────────┐
-         │      Helm Chart       │
-         │  Deployment (2 pods)  │
-         │  Service (ClusterIP)  │
-         │  Ingress (nginx)      │
-         └────┬──────────────────┘
+      ┌───────┴────────────────┐
+      │       Helm Chart       │
+      │  Deployment (2 pods)   │
+      │  Service (ClusterIP)   │
+      │  Ingress (nginx)       │
+      └───────┬────────────────┘
               │
               ▼
        Flask REST API
@@ -64,35 +64,45 @@ A production-grade MLOps project that predicts mental health treatment recommend
 ---
 
 ## Project Structure
+mental-health-prediction-mlops/
+
 ├── app/
 
-│   ├── app.py                  # Flask REST API
+│   ├── app.py                       # Flask REST API
 
-│   └── templates/              # Web UI
+│   └── templates/                   # Web UI
 
-├── src/                        # ML pipeline modules
+├── src/                             # ML pipeline modules
 
-├── models/                     # Trained model artifacts
+├── models/                          # Trained model artifacts
 
-├── data/                       # Raw and processed data
+├── data/                            # Raw and processed data
 
-├── notebooks/                  # EDA and modeling notebooks
+├── notebooks/                       # EDA and modeling notebooks
 
 ├── tests/
 
-│   └── test_app.py             # pytest suite (6 tests)
+│   └── test_app.py                  # pytest suite (6 tests)
 
-├── mental-health-api/          # Helm chart
+├── mental-health-api/               # Helm chart
 
-├── k8s/                        # Raw Kubernetes manifests
+│   ├── Chart.yaml
 
-├── .github/workflows/ci.yml    # GitHub Actions CI pipeline
+│   ├── values.yaml
 
-├── argocd-app.yaml             # ArgoCD Application manifest
+│   └── templates/
+
+├── k8s/                             # Raw Kubernetes manifests
+
+├── .github/workflows/ci.yml         # GitHub Actions CI pipeline
+
+├── argocd-app.yaml                  # ArgoCD Application manifest
 
 ├── prometheus-scrape-config.yaml
 
 ├── Dockerfile
+
+├── train.py
 
 └── requirements.txt
 
