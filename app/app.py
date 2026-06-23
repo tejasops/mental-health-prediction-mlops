@@ -91,6 +91,14 @@ def predict():
         return jsonify({'error': str(e)}), 400
 
 
+@app.route('/api', methods=['GET'])
+def api_info():
+    return jsonify({
+        'service': 'mental-health-prediction-api',
+        'version': '1.0.0',
+        'endpoints': ['/predict', '/health', '/api']
+    }), 200
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')

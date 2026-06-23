@@ -26,7 +26,7 @@ def test_health_check(client):
 
 def test_index_returns_service_info(client):
     """The root endpoint should describe the service, not render HTML."""
-    response = client.get('/')
+    response = client.get('/api')
     assert response.status_code == 200
     data = response.get_json()
     assert data['service'] == 'mental-health-prediction-api'
