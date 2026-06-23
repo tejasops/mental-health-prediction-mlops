@@ -5,61 +5,45 @@ A production-grade MLOps project that predicts mental health treatment recommend
 ---
 
 ## Architecture
-GitHub Push
-
-│
-
-▼
-
-GitHub Actions CI
-
-├── pytest (6 tests)
-
-└── Docker Build & Push → Docker Hub
-
-│
-
-▼
-
-ArgoCD (GitOps)
-
-│
-
-▼
-
-Kubernetes (Minikube)
-
-│
-
-┌────┴────┐
-
-│  Helm   │
-
-│  Chart  │
-
-└────┬────┘
-
-│
-
-┌─────────┴──────────┐
-
-│   Flask REST API   │
-
-│   + Web UI         │
-
-│   /predict         │
-
-│   /health          │
-
-│   /metrics         │
-
-└─────────┬──────────┘
-
-│
-
-Prometheus
-
-(scrapes /metrics every 15s)
+          Developer
+              │
+              │  git push
+              ▼
+    GitHub Actions CI
+    ├── Run pytest (6 tests)
+    └── Build & push Docker image
+              │
+              ▼
+         Docker Hub
+  (tejasops/mental-health-api)
+              │
+              │  auto-sync
+              ▼
+       ArgoCD GitOps
+              │
+              │  applies Helm chart
+              ▼
+     Kubernetes Cluster
+              │
+         ┌────┴──────────────────┐
+         │      Helm Chart       │
+         │  Deployment (2 pods)  │
+         │  Service (ClusterIP)  │
+         │  Ingress (nginx)      │
+         └────┬──────────────────┘
+              │
+              ▼
+       Flask REST API
+       ├── POST /predict   → ML prediction
+       ├── GET  /health    → K8s probe
+       ├── GET  /api       → Service info
+       ├── GET  /          → Web UI
+       └── GET  /metrics   → Prometheus
+              │
+              │  scrape every 15s
+              ▼
+         Prometheus
+  (request rate, latency, memory, CPU)
 
 ---
 
@@ -94,7 +78,9 @@ Prometheus
 
 ├── notebooks/                  # EDA and modeling notebooks
 
-├── tests/                      # pytest suite (6 tests)
+├── tests/
+
+│   └── test_app.py             # pytest suite (6 tests)
 
 ├── mental-health-api/          # Helm chart
 
@@ -119,7 +105,7 @@ Prometheus
 | `/` | GET | Web UI |
 | `/api` | GET | Service info (JSON) |
 | `/health` | GET | Liveness/readiness probe |
-| `/predict` | POST | Treatment prediction |
+| `/predict` | POST | ML prediction |
 | `/metrics` | GET | Prometheus metrics |
 
 ### Prediction Request
@@ -142,8 +128,8 @@ curl -X POST http://<host>/predict \
 ## CI/CD Pipeline
 
 ### GitHub Actions
-1. **Test job** — runs pytest on every push/PR
-2. **Build & Push job** — builds and pushes Docker image to Hub on main push if tests pass
+1. **Test job** — runs pytest on every push/PR to main
+2. **Build & Push job** — builds Docker image and pushes to Hub on main push if tests pass
 
 ### ArgoCD GitOps
 - Auto-syncs Helm chart changes to cluster within 3 minutes
@@ -162,6 +148,9 @@ rate(flask_http_request_total[5m])
 
 # Average response time
 rate(flask_http_request_duration_seconds_sum[5m]) / rate(flask_http_request_duration_seconds_count[5m])
+
+# Error rate
+rate(flask_http_request_total{status=~"5.."}[5m])
 ```
 
 ---
