@@ -1,0 +1,46 @@
+replicaCount: 2
+
+image:
+  repository: tejasops/mental-health-api
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  host: mental-health.local
+  path: /
+  pathType: Prefix
+
+httpRoute:
+  enabled: false
+  hostnames: []
+  parentRefs: []
+  rules: []
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "200m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    path: /health
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    failureThreshold: 3
+
+namespace: mental-health
