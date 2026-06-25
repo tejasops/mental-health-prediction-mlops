@@ -177,3 +177,16 @@ docker run -p 5000:5000 tejasops/mental-health-api:latest
 **Tejas Allada**
 B.Tech CSE (AIML) — Theem College of Engineering, Mumbai
 [LinkedIn](https://linkedin.com/in/tejasallada) | [GitHub](https://github.com/tejasops)
+
+---
+
+## Screenshots
+
+### ArgoCD — GitOps Sync
+![ArgoCD Synced](docs/screenshots/argocd-synced.png)
+
+### Prometheus — Targets
+![Prometheus Targets](docs/screenshots/prometheus-targets.png)
+
+### Grafana — Monitoring Dashboard
+![Grafana Dashboard](docs/screenshots/grafana-dashboard.png)
